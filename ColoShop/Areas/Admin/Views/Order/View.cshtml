@@ -1,0 +1,167 @@
+﻿@model ColoShop.Models.Order
+@{
+    ViewData["Title"] = "Order View";
+    Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+}
+
+@section navigateHeader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/order" class="nav-link">Order List</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">View Order</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Order view</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/admin/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/order">Order List</a></li>
+                    <li class="breadcrumb-item active">@ViewBag.Title</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Order list</h3>
+
+            <div class="card-tools">
+                @*<button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                <i class="fas fa-times"></i>
+                </button>*@
+                @*<a href="/admin/category/add" class="btn btn-primary">Add new</a>*@
+            </div>
+        </div>
+        <div class="card-body">
+            @if (Model != null)
+            {
+                var method = Model.PaymentType == 1 ? "COD" : Model.PaymentType == 2 ? "Transfer" : "Cash";
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="code">Order Code</label>
+                            <input disabled class="form-control" value="@Model.Code" id="code" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Customer</label>
+                            <input disabled class="form-control" value="@Model.CustomerName" id="name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="total">Total</label>
+                            <input disabled class="form-control" value="@Model.TotalAmount" id="total" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input disabled class="form-control" value="@Model.Phone" id="phone" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="date">Date Created</label>
+                            <input disabled class="form-control" value="@Model.CreatedDate" id="date" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone">Email</label>
+                            <input disabled class="form-control" value="@Model.Email" id="email" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="date">Status</label>
+                            <input disabled class="form-control" value="@Model.Status" id="date" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone">Method</label>
+                            <input disabled class="form-control" value="@method" id="email" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Product List</h5>
+                    </div>
+                    <div class="col-12">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Amount</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.ProductOrders)
+                                {
+                                    var index = 1;
+                                    if (item.IdProductNavigation != null)
+                                    {
+                                        var total = @item.Amount * @item.IdProductNavigation.Price;
+                                        <tr>
+                                            <td>@index</td>
+                                            <td>@item.IdProductNavigation.Name</td>
+                                            <td>@item.IdProductNavigation.Price</td>
+                                            <td>@item.Amount</td>
+                                            <td>@total</td>
+                                        </tr>
+                                    }
+                                    index++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->

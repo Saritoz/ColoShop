@@ -1,0 +1,29 @@
+﻿@model IEnumerable<ColoShop.Models.ShoppingCartItem>
+
+@if (Model != null && Model.Any())
+{
+    var i = 1;
+    decimal totalAll = 0;
+    <h5>In Cart: <span>@Model.Count()</span></h5>
+    <table class="table">
+        @foreach (var item in Model)
+        {
+            totalAll += item.TotalPrice;
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+            </tr>
+        }
+        <tr>
+            <td colspan="2">Total</td>
+            <td>@totalAll</td>
+        </tr>
+    </table>
+
+}
+else
+{
+    <h5>There is no item in your cart <a href="/">shop now</a></h5>
+}
+

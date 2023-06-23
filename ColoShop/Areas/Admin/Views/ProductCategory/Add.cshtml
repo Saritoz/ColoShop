@@ -1,0 +1,179 @@
+﻿@model ColoShop.Models.ProductCategory
+@{
+    ViewData["Title"] = "Add Category For Product";
+    Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+}
+
+@section navigateHeader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/productCategory" class="nav-link">Category Products</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">Add Category Product</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Add new</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/productCategory">Category Product</a></li>
+                    <li class="breadcrumb-item active">Add</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Category Product Add</h3>
+        </div>
+        <div class="card-body">
+            <div class="bs-stepper-content">
+                <form method="post" action="/admin/productCategory/add">
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+
+                    <div class="content active dstepper-block" role="tabpanel">
+                        <div class="form-group">
+                            <label for="title">Name</label>
+                            @Html.TextBoxFor(x => x.Name, new {@class="form-control", @placeholder="title", @autocomplete="off", @id="title"})
+                            @Html.ValidationMessageFor(x => x.Name, null, new {@class="text-danger"})
+                        </div>
+                        <div class="form-group">
+                            <label for="title">Icon url</label>
+                            @Html.TextBoxFor(x => x.Icon, new {@class="form-control", @placeholder="url", @autocomplete="off", @id="title"})
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default" id="btnBrowser">
+                                Choose
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            @Html.TextAreaFor(x => x.Description, new {@class="form-control", @placeholder="description here", @autocomplete="off", @id="description"})
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Add new</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+        
+    </div>
+    <!-- /.card -->
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">All Images</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="exampleInputFile" name="upload" accept="image/*">
+                                    <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                </div>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-default" id="btnUpload">Upload</button>
+                                </div>
+                            </div>
+                        </form>
+                        <p id="messageUpload"></p>
+                    </div>
+                    <div id="imageGallery" style="height:500px" class="overflow-auto">
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        function copyImageURL(name) {
+            navigator.clipboard.writeText(`/uploads/icons/${name}`);
+            alert('URL copied');
+        }
+
+        $(document).ready(function () {
+            $('body').on('click', '#btnBrowser', function () {
+                const message = $('#messageUpload');
+                message.text('');
+                $.ajax({
+                    url: '/admin/upload/getIconsName',
+                    method: "GET",
+                    success: (res) => {
+                        const imageGallery = $('#imageGallery');
+                        imageGallery.empty();
+
+                        res.data.forEach(function (name) {
+                            const imageUrl = `/uploads/icons/${name}`;
+                            const imgElement = $('<img>').attr('src', imageUrl).addClass('img-fluid').attr('alt', 'Uploaded Image').attr('data-bs-dismiss', 'modal').attr('width', '100');
+                            const buttonElement = $('<button>').addClass('btn btn-default').attr('type', 'button').text('click to copy url').click(function () {
+                                copyImageURL(name);
+                            });
+
+                            const divElement = $('<div>').addClass('my-3').append(imgElement, buttonElement);
+                            imageGallery.append(divElement);
+                        });
+                    }
+                })
+            })
+
+            $('body').on('click', '#btnUpload', function () {
+                const form = $('#uploadForm')[0]
+                const formData = new FormData(form)
+
+                $.ajax({
+                    url: '/admin/upload/UploadIcon',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: (res) => {
+                        if (res.success) {
+                            $('#messageUpload').text('upload success, re-open this modal');
+                        }
+                        else {
+                            $('#messageUpload').text('upload failed');
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+}

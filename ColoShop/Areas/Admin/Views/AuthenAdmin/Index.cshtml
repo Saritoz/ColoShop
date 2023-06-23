@@ -1,0 +1,54 @@
+﻿@model ColoShop.Models.Admin
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+    .error {
+        color: red;
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center h-100 container">
+    <div style="width:500px" class="shadow rounded p-5">
+        <h3 class="text-center">Login</h3>
+        <p class="text-center">You need to login before processing</p>
+        <form method="POST" action="/admin/authenAdmin/Login" id="loginForm">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                @Html.TextBoxFor(x => x.Username, new {@autocomplete="off", @class="Form-control"})
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                @Html.TextBoxFor(x => x.Password, new {@autocomplete="off", @type="password", @class="Form-control"})
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-success" id="btnSubmit" type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#loginForm').validate({
+            rules: {
+                Username: {
+                    required: true
+                },
+                Password: {
+                    required: true
+                }
+            },
+            messages: {
+                Username: "Enter your username",
+                Password: "Enter your password"
+            },
+            submitHandler: function (form) {
+                $('#btnSubmit').prop('disabled', true)
+                form.submit();
+            }
+        })
+    })
+</script>

@@ -1,0 +1,34 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Images on Server";
+}
+
+<link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+<div id="browseFile" class="row">
+    @foreach (var item in @ViewBag.allImages)
+    {
+        <div class="col-6">
+            <img url="~/uploads/images/@item.Name" alt="thumb" title="@item.Name" width="150" height="100"/>
+        </div>
+        <div class="col-6">
+            <p>Url</p>
+            <p>/uploads/images/@item.Name</p>
+        </div>
+    }
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/ckeditor/ckeditor.js"></script>
+<script>
+    $(document).ready(function() {
+        const funcNum = @(Context.Request.Query["CKEditorFuncNum"] + ";")
+        $('#browseFile').on('click', 'img', function () {
+            const fileUrl = `/uploads/images/` + $(this).attr('title');
+            window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+            window.close();
+        })
+    })    
+</script>
+

@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section OtherCss {
+    <link rel="stylesheet" type="text/css" href="~/clients/styles/categories_styles.css">
+    <link rel="stylesheet" type="text/css" href="~/clients/styles/categories_responsive.css">
+    <style>
+        .disabled-link {
+            cursor: not-allowed;
+            color: #ccc;
+            text-decoration: none;
+            pointer-events: none;
+        }
+    </style>
+}
+
+<div class="container product_section_container">
+    <div class="row">
+        <div class="col-12 product_section clearfix">
+
+            <!-- Breadcrumbs -->
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Cart</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <!-- Main content -->
+        <div class="col-12" id="cart_content">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/clients/js/categories_custom.js"></script>
+    <script>
+        $(document).ready(function () {
+            function GetCartTable() {
+                $.ajax({
+                    url: '/shoppingCart/Partial_CartTable',
+                    method: 'GET',
+                    success: function (res) {
+                        $('#cart_content').empty()
+                        $('#cart_content').html(res)
+                    }
+                })
+            }
+
+            GetCartTable()
+
+            $('body').on('click', '.btnRemoveFromCart', function (e) {
+                e.preventDefault()
+                const id = $(this).data('id')
+                const conf = confirm('Are you sure you want to delete it ?')
+                if (conf) {
+                    $.ajax({
+                        url: '/shoppingCart/removeFromCart',
+                        method: 'DELETE',
+                        data: { id },
+                        success: function (res) {
+                            if (res.success) {
+                                //$(`#trow_${id}`).remove()
+                                $('#checkout_items').text(res.count)
+                                GetCartTable()
+                                //const curr = parseFloat($('#totalAll').text())
+                                //$('#totalAll').text(curr - res.totalSub)
+                            }
+                        }
+                    })
+                }
+            })
+
+            $('body').on('click', '#clearCart', function (e) {
+                e.preventDefault()
+                const conf = confirm('Are you sure you want to clear your cart ?')
+                if (conf) {
+                    $.ajax({
+                        url: '/shoppingCart/clearCart',
+                        method: 'POST',
+                        success: function (res) {
+                            if (res.success) {
+                                $('#checkout_items').text(0)
+                                GetCartTable()
+                            }
+                        }
+                    })
+                }
+            })
+
+            $('body').on('click', '.btnUpdateToCart', function (e) {
+                e.preventDefault()
+                const id = $(this).data('id')
+                const quantity = $(`#quantity_${id}`).val()
+                $.ajax({
+                    url: '/shoppingCart/updateCart',
+                    method: 'POST',
+                    data: { id, quantity },
+                    success: function (res) {
+                        if (res.success) {
+                            GetCartTable()
+                        }
+                    }
+                })
+            })
+
+            $('body').on('change', '.inputQuantity', function (e) {
+                var linkElement = $("#processPayment");
+                if (!linkElement.hasClass("disabled-link")) {
+                    linkElement.addClass('disabled-link')
+                    linkElement.text('Update first!')
+                }
+            })
+        })
+    </script>
+}

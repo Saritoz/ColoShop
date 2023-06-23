@@ -1,0 +1,17 @@
+﻿@model IEnumerable<ColoShop.Models.ProductCategory>
+@{
+}
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="banner_item align-items-center" style="background-image:url(@item.Icon)">
+                <div class="banner_category">
+                    <a href="/category-@item.Name.ToLower()-@item.Id">@item.Name's</a>
+                </div>
+            </div>
+        </div>
+    }
+}

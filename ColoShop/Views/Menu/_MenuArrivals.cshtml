@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ColoShop.Models.ProductCategory>
+
+@if (Model != null && Model.Any())
+{
+
+    <div class="row">
+        <div class="col text-center">
+            <div class="section_title new_arrivals_title">
+                <h2>New Arrivals</h2>
+            </div>
+        </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col text-center">
+            <div class="new_arrivals_sorting">
+                <ul class="arrivals_grid_sorting clearfix button-group filters-button-group">
+                    <li class="grid_sorting_button button d-flex flex-column justify-content-center align-items-center active is-checked" data-filter="*">all</li>
+
+                    @foreach (var item in Model)
+                    {
+                        <li class="grid_sorting_button button d-flex flex-column justify-content-center align-items-center" data-filter=".@item.Name.Replace(" ", "_").ToLower()">@item.Name</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="container-products">
+        <div class="col">
+            <div class="product-grid row" id="itemByIdCate">
+            </div>
+        </div>
+    </div>
+
+    <script src="~/clients/plugins/Isotope/isotope.pkgd.min.js"></script>
+    <script src="~/clients/js/custom.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/products/Partial_ProdByIdCate/1',
+                method: "GET",
+                success: function (res) {
+                    $('#itemByIdCate').html(res);
+
+                    $('#container-products').find('.product-grid').isotope({
+                        itemSelector: '.product-item',
+                        layoutMode: 'fitRows'
+                    });
+
+                }
+            })
+        })
+    </script>
+}

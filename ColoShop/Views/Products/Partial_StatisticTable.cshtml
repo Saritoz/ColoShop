@@ -1,0 +1,20 @@
+﻿@model ColoShop.Models.ViewCount
+
+@if (Model != null)
+{
+    <table class="table">
+        <tr>
+            <td>Online</td>
+            <td>@ViewBag.OnlineUser</td>
+        </tr>
+        <tr>
+            <td>Today</td>
+            <td>@Model.Today</td>
+        </tr>
+        <tr>
+            <td>Yesterday</td>
+            <td>@Model.Yesterday</td>
+        </tr>
+    </table>
+
+}

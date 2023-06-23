@@ -1,0 +1,11 @@
+﻿@model IEnumerable<ColoShop.Models.Category>
+
+@if (Model != null && Model.Any())
+{
+	@foreach (var item in Model)
+	{
+		<li><a href="/@item.Name.Replace(" ", "").ToLower()">@item.Name</a></li>
+	}
+	
+}
+

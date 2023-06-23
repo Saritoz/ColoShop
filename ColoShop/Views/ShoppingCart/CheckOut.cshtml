@@ -1,0 +1,182 @@
+﻿@model ColoShop.Models.Order
+@{
+    ViewData["Title"] = "CheckOut";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section OtherCss {
+    <link rel="stylesheet" type="text/css" href="~/clients/styles/categories_styles.css">
+    <link rel="stylesheet" type="text/css" href="~/clients/styles/categories_responsive.css">
+}
+
+<div class="container product_section_container">
+    <div class="row">
+        <div class="col-12 product_section clearfix">
+
+            <!-- Breadcrumbs -->
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/cart"><i class="fa fa-angle-right" aria-hidden="true"></i>Cart</a></li>
+                    <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Checkout</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <!-- Main content -->
+        <div class="col-12">
+            <h3>Payment Information</h3>
+            <p>Please ensure your information when filling is exactly</p>
+        </div>
+        <div class="col-12 col-md-8" id="info-checkout">
+            <form id="paymentForm">
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                <h5>Information</h5>
+                <div class="form-group">
+                    <label>Full name</label>
+                    @Html.TextBoxFor(x => x.CustomerName, new {@class="form-control", @autocomplete="off"})
+                    @*<input class="form-control" type="text" name="CustomerName" autocomplete="off" />*@
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    @Html.TextBoxFor(x => x.Phone, new {@class="form-control", @autocomplete="off"})
+                    @*<input class="form-control" type="text" name="Phone" autocomplete="off" />*@
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    @Html.TextBoxFor(x => x.Address, new {@class="form-control", @autocomplete="off"})
+                    @*<input class="form-control" type="text" name="Address" autocomplete="off" />*@
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    @Html.TextBoxFor(x => x.Email, new {@class="form-control", @autocomplete="off"})
+                    @*<input class="form-control" type="text" name="Email" autocomplete="off" />*@
+                </div>
+                <div class="form-group">
+                    <label>Payment method</label>
+                    <select class="form-control text-black" name="PaymentType">
+                        <option value="">-Select Method-</option>
+                        <option value="1">COD</option>
+                        <option value="2">Transfer</option>
+                        <option value="3">Cash</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    @if (ViewBag.existItem)
+                    {
+                        <button type="submit" class="btn btn-block btn-success" id="btnSubmitOder">Order Now</button>
+                    }
+                    else
+                    {
+                        <a href="/" class="btn btn-block btn-danger">Shop now</a>
+                    }
+                </div>
+            </form>
+        </div>
+        <div class="col-12 col-md-4" id="cart-overview">
+        </div>
+        <div class="col-12" id="message-checkout">
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/clients/js/categories_custom.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/shoppingCart/Partial_Checkout_Items',
+                method: 'GET',
+                success: function (res) {
+                    $('#cart-overview').html(res)
+                }
+            })
+
+            $('#paymentForm').validate({
+                rules: {
+                    CustomerName: {
+                        required: true
+                    },
+                    Phone: {
+                        required: true
+                    },
+                    Address: {
+                        required: true
+                    },
+                    Email: {
+                        required: true,
+                        email: true
+                    },
+                    PaymentType: {
+                        required: true
+                    }
+                },
+                messages: {
+                    CustomerName: {
+                        required: "This field cannot empty"
+                    },
+                    Phone: {
+                        required: "This field cannot empty"
+                    },
+                    Address: {
+                        required: "This field cannot empty"
+                    },
+                    Email: {
+                        required: "This field cannot empty",
+                        email: "Enter a valid email"
+                    },
+                    PaymentType: {
+                        required: "Please select method"
+                    }
+                },
+                submitHandler: function (form) {
+                    $('#btnSubmitOder').prop('disabled', true)
+                    const formData = new FormData(form);
+
+                    $.ajax({
+                        url: '/shoppingCart/processCheckOut',
+                        method: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (res) {
+                            if (res.success) {
+                                $('#info-checkout').empty()
+                                $('#cart-overview').empty()
+                                $('#checkout_items').text(0)
+                                $('#message-checkout').html(`<p>Successfully order. Return <a href="/">back to home</a></p>`)
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error:", xhr.responseText);
+                        }
+                    });
+                }
+            })
+
+            //$('#paymentForm').submit(function (e) {
+            //    e.preventDefault()
+
+            //    const form = $(this)
+            //    const formData = new FormData(form[0])
+
+            //    $.ajax({
+            //        url: '/shoppingCart/processCheckOut',
+            //        method: 'POST',
+            //        data: formData,
+            //        processData: false,
+            //        contentType: false,
+            //        success: function (data) {
+
+            //        },
+            //        error: function (xhr, status, error) {
+            //            console.error("Error:", xhr.responseText);
+            //        }
+            //    });
+            //})
+        })
+    </script>
+}
+

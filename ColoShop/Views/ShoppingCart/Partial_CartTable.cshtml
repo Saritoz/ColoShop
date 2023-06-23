@@ -1,0 +1,56 @@
+﻿@model IEnumerable<ColoShop.Models.ShoppingCartItem>
+
+<table class="table text-center">
+    <tr>
+        <th>Ser.</th>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Amount</th>
+        <th>Total</th>
+        <th></th>
+    </tr>
+    @if (Model != null && Model.Any())
+    {
+        var i = 1;
+        decimal totalAll = 0;
+        foreach (var item in Model)
+        {
+            totalAll += item.TotalPrice;
+            <tr id="trow_@item.ProductId">
+                <td>@i</td>
+                <td><img src="@item.ProductImage" style="max-width:100px; max-height: 100px" /></td>
+                <td><a href="/detail/@item.ProductName.Replace(" ", "_").ToLower()-p@(item.ProductId)">@item.ProductName</a></td>
+                <td>@item.CategoryName</td>
+                <td>@item.Price</td>
+                <td><input type="number" id="quantity_@item.ProductId" class="inputQuantity" value="@item.Quantity" min="1" max="99" /></td>
+                <th>@item.TotalPrice</th>
+                <td>
+                    <a href="#" class="mr-2 p-1" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-times text-danger btnRemoveFromCart" style="font-size: 20px" data-id="@item.ProductId"></i></a>
+                    <a href="#" class="p-1" data-toggle="tooltip" data-placement="bottom" title="Update"><i class="fa fa-refresh text-success btnUpdateToCart" style="font-size: 18px" data-id="@item.ProductId"></i></a>
+                </td>
+            </tr>
+            i++;
+        }
+        <tr>
+            <th class="text-left" colspan="6">Total</th>
+            <th id="totalAll">@totalAll</th>
+            <td></td>
+        </tr>
+    }
+    else
+    {
+        <tr>
+            <td colspan="7">No product in your cart</td>
+        </tr>
+    }
+</table>
+
+@if (Model != null && Model.Any())
+{
+    <div class="d-flex justify-content-end align-items-center flex-wrap">
+        <a href="#" class="btn btn-danger mr-2" id="clearCart">Delete All</a>
+        <a href="/payment" class="btn btn-success" id="processPayment">Process to Payment</a>
+    </div>
+}

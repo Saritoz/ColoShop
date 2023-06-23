@@ -1,0 +1,157 @@
+﻿@model ColoShop.Models.New
+@{
+    ViewData["Title"] = "Add News";
+    Layout = "~/Areas/Admin/Views/Shared/_layout.cshtml";
+}
+
+@section navigateHeader {
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/news" class="nav-link">News</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="#" class="nav-link">Add New</a>
+        </li>
+    </ul>
+}
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Add new</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/admin">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/news">News</a></li>
+                    <li class="breadcrumb-item active">Add</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">News add</h3>
+        </div>
+        <div class="card-body">
+            <div class="bs-stepper-content">
+                <form method="post" action="/admin/news/add">
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+
+                    <div class="content active dstepper-block" role="tabpanel">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            @Html.TextBoxFor(x => x.Title, new {@class="form-control", @placeholder="title", @autocomplete="off", @id="title"})
+                            @Html.ValidationMessageFor(x => x.Title, null, new {@class="text-danger"})
+                        </div>
+                        <div class="form-group">
+                            <label for="txtImage">Image</label>
+                            @Html.TextBoxFor(x=>x.Image, new {@class="form-control", @id="txtImage", @autocomplete="off"})
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
+                                Choose
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            @Html.TextAreaFor(x => x.Description, new {@class="form-control", @placeholder="description here", @autocomplete="off", @id="description"})
+                        </div>
+                        <div class="form-group">
+                            <label for="detail">Detail</label>
+                            @Html.TextAreaFor(x => x.Detail, new {@class="form-control", @placeholder="description here", @autocomplete="off", @id="detail"})
+                            @*<textarea class="form-control" id="editor"></textarea>*@
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Active</label>
+                            @Html.CheckBoxFor(x => x.IsActive)
+                        </div>
+                        @*<button class="btn btn-primary" onclick="stepper.next()">Next</button>*@
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Add new</button>
+                        </div>
+                    </div>
+                </form>
+
+                @*@using (Html.BeginForm("Add", "Category", FormMethod.Post ))
+                {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                <!-- your steps content here -->
+                }
+                <button class="btn btn-primary" onclick="stepper.previous()">Previous</button>*@
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">All Images</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="imageGallery" style="height:500px" class="overflow-auto">
+                        @foreach (var imagePath in ViewBag.allImages)
+                        {
+                            <div class="my-3">
+                                <img src="@Url.Content("~/uploads/images/"+ imagePath.Name)" class="img-fluid" alt="Uploaded Image" data-bs-dismiss="modal" width="100">
+                                <button type="button" class="btn btn-default" onclick="copyImageURL('@imagePath.Name')">click to copied url</button>
+                                
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</section>
+<!-- /.content -->
+@section scripts {
+    <script src="~/ckeditor/ckeditor.js"></script>
+    
+    <script>
+        const editor = CKEDITOR
+            .replace("detail", {
+                filebrowserUploadUrl: '/admin/upload/UploadImg',
+                filebrowserBrowseUrl: '/admin/upload/UploadExplorer',
+            })
+        //const txtImg = document.getElementById("txtImage");
+        //const demoImg = document.getElementById("demoImg");
+        //txtImg.addEventListener('blur', (e) => {
+        //    demoImg.src = e.target.value
+        //})
+
+        function copyImageURL(name) {
+            navigator.clipboard.writeText(`/uploads/images/${name}`);
+            alert('URL copied');
+        }
+    </script>
+
+}

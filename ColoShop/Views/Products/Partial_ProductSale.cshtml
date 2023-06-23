@@ -1,0 +1,68 @@
+﻿@model IEnumerable<ColoShop.Models.Product>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        <div class="col text-center">
+            <div class="section_title new_arrivals_title">
+                <h2>Best Sellers</h2>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="product_slider_container">
+                <div class="owl-carousel owl-theme product_slider">
+
+                    <!-- Slide -->
+                    @foreach (var item in Model)
+                    {
+                        <div class="owl-item product_slider_item">
+                            <div class="product-item">
+                                <div class="product discount">
+                                    <div class="product_image d-flex justify-content-center align-items-center" style="height: 200px">
+                                        @if (item.Image != null)
+                                        {
+                                            item.Avatar ??= 0;
+                                            <img src="@item.Image.Split(";")[(int)item.Avatar]" alt="" style="max-width: 80%; max-height: 80% ">
+                                        }
+                                    </div>
+                                    <div class="favorite favorite_left"></div>
+                                    @if (item.PriceSale > 0)
+                                    {
+                                        var reducingAmount = item.Price - item.PriceSale;
+                                        <div class="product_bubble product_bubble_right product_bubble_red d-flex flex-column align-items-center">
+                                            <span>-@reducingAmount</span>
+                                        </div>
+                                    }
+                                    <div class="product_info">
+                                        <h6 class="product_name"><a href="/detail/@item.Name.Replace(" ", "_").ToLower()-p@(item.Id)">@item.Name</a></h6>
+                                        @if (item.PriceSale > 0)
+                                        {
+                                            <div class="product_price">$@item.PriceSale<span>$@item.Price</span></div>
+                                        }
+                                        else
+                                        {
+                                            <div class="product_price">$@item.Price</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+
+                <!-- Slider Navigation -->
+
+                <div class="product_slider_nav_left product_slider_nav d-flex align-items-center justify-content-center flex-column">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </div>
+                <div class="product_slider_nav_right product_slider_nav d-flex align-items-center justify-content-center flex-column">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+}
